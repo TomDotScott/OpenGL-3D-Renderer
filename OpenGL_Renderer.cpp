@@ -18,7 +18,7 @@ const char* FRAGMENT_SHADER_SOURCE = "#version 330 core\n"\
     "out vec4 FragColor;\n"\
     "void main()\n"\
     "{\n"\
-    "    FragColor = vec4(0.52f, 0.52f, 0.52f, 1.0f);\n"\
+    "    FragColor = vec4(1.0f, 0.941f, 0.302f, 1.0f);\n"\
     "}\0";
 
 
@@ -30,18 +30,6 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // Vertices for our triangle, ranging from -1 to 1
-    // These make an equilateral triangle!
-    const GLfloat rootThreeOverThree = sqrtf(3) / 3.f;
-
-    const GLfloat vertices[] =
-    {
-        -0.5f, -0.5f * rootThreeOverThree, 0.f,
-         0.5f, -0.5f * rootThreeOverThree, 0.f,
-         0.0f,  0.5f * rootThreeOverThree * 2.f, 0.f
-    };
-
 
     GLFWwindow* mainWindow = glfwCreateWindow(
         WINDOW_WIDTH, 
@@ -93,18 +81,50 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
+    // Vertices for our triangle, ranging from -1 to 1
+    // These make a LOZ tri-force!
+    const GLfloat rootThreeOverThree = sqrtf(3) / 3.f;
+
+    const GLfloat vertices[] =
+    {
+        -0.5f       , -0.5f * rootThreeOverThree      , 0.f, // Lower Left Corner
+         0.5f       , -0.5f * rootThreeOverThree      , 0.f, // Lower Right Corner
+         0.0f       ,  0.5f * rootThreeOverThree * 2.f, 0.f, // Upper Corner
+        -0.5f / 2.f ,  0.5f * rootThreeOverThree / 2.f, 0.f, // Inner Left
+         0.5f / 2.f ,  0.5f * rootThreeOverThree / 2.f, 0.f, // Inner Right
+         0.0f       , -0.5f * rootThreeOverThree      , 0.f, // Inner Down
+    };
+
+    GLuint indices[] =
+    {
+        0, 3, 5, // Lower Left triangle
+        3, 2, 4, // Lower Right triangle
+        5, 4, 1, // Upper triangle
+    };
+
 
     // In order to use the vertices defined above, we need to create buffers to store them
     // IMPORTANT - VAO needs to be defined before the VBO
-    GLuint vertexArrayObject, vertexBufferObject;
+    GLuint vertexArrayObject, vertexBufferObject, elementBufferObject;
 
 	// We need to create vertex array object to allow OpenGL to use our vertex buffer
     glGenVertexArrays(1, &vertexArrayObject);
     glGenBuffers(1, &vertexBufferObject);
+    glGenBuffers(1, &elementBufferObject);
 
     // Then, we need to bind the buffers
     glBindVertexArray(vertexArrayObject);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+
+    // Assign the index data to the EBO
+    glBufferData(
+        GL_ELEMENT_ARRAY_BUFFER,
+        sizeof(indices),
+        indices,
+        GL_STATIC_DRAW
+    );
+
 
     // Assign the data to the VBO
     glBufferData(
@@ -129,6 +149,7 @@ int main()
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
     // OpenGL likes normalised-decimal form of RGB. 1.f is opaque, 0.f is transparent
@@ -142,7 +163,7 @@ int main()
     while(!glfwWindowShouldClose(mainWindow))
     {
         // Clear the screen before the render
-        glClearColor(0.27f, 0.15f, 0.34f, 1.0f);
+        glClearColor(0.004f, 0.196f, 0.125f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Use the shader program
@@ -150,7 +171,7 @@ int main()
         glBindVertexArray(vertexArrayObject);
 
         // Draw the triangle
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         // Swap the buffers to display the triangle on screen
         glfwSwapBuffers(mainWindow);
@@ -161,6 +182,7 @@ int main()
     // Delete all of the objects created so far
     glDeleteVertexArrays(1, &vertexArrayObject);
     glDeleteBuffers(1, &vertexBufferObject);
+    glDeleteBuffers(1, &elementBufferObject);
     glDeleteProgram(shaderProgram);
 
 
