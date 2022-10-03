@@ -1,5 +1,10 @@
 #include <iostream>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
 
 int main()
 {
@@ -12,8 +17,8 @@ int main()
 
 
     GLFWwindow* mainWindow = glfwCreateWindow(
-        800, 
-        600, 
+        WINDOW_WIDTH, 
+        WINDOW_HEIGHT, 
         "OpenGL Game", 
         nullptr, 
         nullptr
@@ -30,6 +35,19 @@ int main()
     glfwMakeContextCurrent(mainWindow);
 
     std::cout << "Hello World!\n";
+
+    gladLoadGL();
+
+    // 0, 0 is bottom left of the viewport
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    // OpenGL likes normalised-decimal form of RGB. 1.f is opaque, 0.f is transparent
+    glClearColor(0.27f, 0.15f, 0.34f, 1.0f);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Swap the front and back buffers
+    glfwSwapBuffers(mainWindow);
 
     while(!glfwWindowShouldClose(mainWindow))
     {
