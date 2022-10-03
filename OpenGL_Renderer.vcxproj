@@ -127,7 +127,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ElementBufferObject.cpp" />
     <ClCompile Include="OpenGL_Renderer.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="VertexArrayObject.cpp" />
+    <ClCompile Include="VertexBufferObject.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Default.frag" />
+    <None Include="default.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ElementBufferObject.h" />
+    <ClInclude Include="OpenGLObject.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="VertexArrayObject.h" />
+    <ClInclude Include="VertexBufferObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
