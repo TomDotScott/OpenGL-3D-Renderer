@@ -1,6 +1,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb_image.h>
 
 #include "Shader.h"
 #include "VertexBufferObject.h"
@@ -13,25 +14,19 @@
 int main()
 {
     // Vertices for our triangle, ranging from -1 to 1
-   // These make a LOZ tri-force!
-    const GLfloat rootThreeOverThree = sqrtf(3) / 3.f;
-
     const GLfloat vertices[] =
     {
-    	// X        |                 Y               |  Z   |  Red  |  Green  |  Blue
-        -0.5f       , -0.5f * rootThreeOverThree      , 0.f,    0.8f,   0.2f,     0.02f,   // Lower Left Corner
-         0.5f       , -0.5f * rootThreeOverThree      , 0.f,    0.8f,   0.2f,     0.02f,   // Lower Right Corner
-         0.0f       ,  0.5f * rootThreeOverThree * 2.f, 0.f,    1.0f,   0.6f,     0.32f,   // Upper Corner
-        -0.5f / 2.f ,  0.5f * rootThreeOverThree / 2.f, 0.f,    0.9f,   0.45f,    0.07f,   // Inner Left
-         0.5f / 2.f ,  0.5f * rootThreeOverThree / 2.f, 0.f,    0.9f,   0.45f,    0.07f,   // Inner Right
-         0.0f       , -0.5f * rootThreeOverThree      , 0.f,    0.8f,   0.2f,     0.02f    // Inner Down
+    	// X |   Y  |  Z   |  Red  |  Green  |  Blue
+        -0.5f, -0.5f, 0.0f,   1.0f,   0.0f,     0.0f,   // Lower Left Corner
+        -0.5f,  0.5f, 0.0f,   0.0f,   1.0f,     0.0f,   // Lower Right Corner
+         0.5f,  0.5f, 0.0f,   0.0f,   0.0f,     1.0f,   // Upper Corner
+         0.5f, -0.5f, 0.0f,   1.0f,   1.0f,     1.0f,   // Inner Left
     };
 
     GLuint indices[] =
     {
-        0, 3, 5, // Lower Left triangle
-        3, 2, 4, // Lower Right triangle
-        5, 4, 1, // Upper triangle
+        0, 2, 1,
+        0, 3, 2
     };
 
 
@@ -115,7 +110,7 @@ int main()
         vao1.Bind();
 
         // Draw the triangle
-        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // Swap the buffers to display the triangle on screen
         glfwSwapBuffers(mainWindow);
