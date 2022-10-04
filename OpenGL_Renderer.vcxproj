@@ -131,6 +131,7 @@
     <ClCompile Include="OpenGL_Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexArrayObject.cpp" />
     <ClCompile Include="VertexBufferObject.cpp" />
   </ItemGroup>
@@ -142,6 +143,7 @@
     <ClInclude Include="ElementBufferObject.h" />
     <ClInclude Include="OpenGLObject.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="VertexArrayObject.h" />
     <ClInclude Include="VertexBufferObject.h" />
   </ItemGroup>

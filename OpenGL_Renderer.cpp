@@ -1,12 +1,12 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stb_image.h>
 
-#include "Shader.h"
-#include "VertexBufferObject.h"
-#include "VertexArrayObject.h"
 #include "ElementBufferObject.h"
+#include "Shader.h"
+#include "Texture.h"
+#include "VertexArrayObject.h"
+#include "VertexBufferObject.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -107,57 +107,8 @@ int main()
     vbo1.Unbind();
     ebo1.Unbind();
 
-    const GLint scaleUniformID = glGetUniformLocation(shaderProgram.m_ID, "scale");
-
-    // Tell stb to flip the image because OpenGL loads from bottom left
-    stbi_set_flip_vertically_on_load(true);
-
-    // Set up drawing our texture. We need floats to store the width, height and amount of colour channels in the image
-    int width, height, numColourChannels;
-    unsigned char* imagePixels = stbi_load(
-        "Red_Panda.png", 
-        &width, 
-        &height, 
-        &numColourChannels, 
-        0
-    );
-
-    // In order to use the texture, we need to create the reference and generate the GL Object
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-
-    // After, we need to activate the texture and bind it so that OpenGL can draw it
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Now we've bound the texture, we need to change the image filtering mode
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    // Then we can set up the repeating mode for the texture
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // Finally, we generate the image to be displayed on screen
-    glTexImage2D(
-        GL_TEXTURE_2D,
-        0,
-        GL_RGBA,          // If the image is JPG use GL_RGB
-        width,
-        height,
-        0,
-        GL_RGBA,
-        GL_UNSIGNED_BYTE,
-        imagePixels
-    );
-
-    // And then we'll generate the mipmaps for that image
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    stbi_image_free(imagePixels);
-
-	// Unbind the texture
-    glBindTexture(GL_TEXTURE_2D, 0);
+    Texture redPanda("Red_Panda.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    redPanda.TexUniformUnit(shaderProgram, "tex0", 1);
 
     const GLuint tex0UniformID = glGetUniformLocation(shaderProgram.m_ID, "tex0");
     shaderProgram.Activate();
@@ -172,11 +123,8 @@ int main()
         // Use the shader program
         shaderProgram.Activate();
 
-        glUniform1f(scaleUniformID, 0.1f);
-
         // To use our texture, we need to bind it!
-        glBindTexture(GL_TEXTURE_2D, textureID);
-
+        glBindTexture(GL_TEXTURE_2D, redPanda.m_ID);
 
         vao1.Bind();
 
@@ -192,7 +140,7 @@ int main()
     vao1.Delete();
     vbo1.Delete();
     ebo1.Delete();
-    glDeleteTextures(1, &textureID);
+    redPanda.Delete();
     shaderProgram.Delete();
 
     // Delete and stop GLFW when the program finishes
