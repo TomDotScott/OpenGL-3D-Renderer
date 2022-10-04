@@ -15,5 +15,7 @@ struct Shader
 	void Activate() const;
 	void Delete() const;
 
+	static void CompileErrors(GLuint shader, const std::string& type);
+
 	GLuint m_ID;
 };

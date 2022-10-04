@@ -99,6 +99,8 @@ int main()
     vbo1.Unbind();
     ebo1.Unbind();
 
+    const GLint scaleUniformID = glGetUniformLocation(shaderProgram.m_ID, "scale");
+
     while(!glfwWindowShouldClose(mainWindow))
     {
         // Clear the screen before the render
@@ -107,6 +109,9 @@ int main()
 
         // Use the shader program
         shaderProgram.Activate();
+
+        glUniform1f(scaleUniformID, 0.5f);
+
         vao1.Bind();
 
         // Draw the triangle
