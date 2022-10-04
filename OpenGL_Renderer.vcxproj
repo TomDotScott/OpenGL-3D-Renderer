@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ElementBufferObject.cpp" />
     <ClCompile Include="OpenGL_Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -140,6 +141,7 @@
     <None Include="default.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ElementBufferObject.h" />
     <ClInclude Include="OpenGLObject.h" />
     <ClInclude Include="Shader.h" />

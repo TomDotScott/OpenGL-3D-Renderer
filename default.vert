@@ -10,17 +10,11 @@ out vec3 colour;
 // UVs of the texture
 out vec2 texCoord;
 
-// Scale of the vertices
-uniform float scale;
-
-// The various matrices to give perspective
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
+uniform mat4 camMatrix;
 
 void main()
 {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);
+    gl_Position = camMatrix * vec4(aPos, 1.0);
 
     colour = aColour;
 

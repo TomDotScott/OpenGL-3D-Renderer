@@ -9,6 +9,7 @@
 #include "Texture.h"
 #include "VertexArrayObject.h"
 #include "VertexBufferObject.h"
+#include "Camera.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -121,11 +122,14 @@ int main()
     shaderProgram.Activate();
     glUniform1i(tex0UniformID, 0);
 
-
-    float pyramidRotation = 0.f;
-    double previousTime = glfwGetTime();
-
+    // Enable the depth buffer for proper culling
     glEnable(GL_DEPTH_TEST);
+
+    Camera camera(
+        WINDOW_WIDTH, 
+        WINDOW_HEIGHT, 
+        { 0.f, 0.f, 3.f }
+    );
 
     while(!glfwWindowShouldClose(mainWindow))
     {
@@ -136,40 +140,9 @@ int main()
         // Use the shader program
         shaderProgram.Activate();
 
-        const double currentTime = glfwGetTime();
-        // Every 60 frames-ish, rotate the pyramid
-        if(currentTime - previousTime >= static_cast<double>(1.f / 60.f))
-        {
-            pyramidRotation += 0.05f;
-            previousTime = currentTime;
-        }
+        camera.HandleInput(mainWindow);
 
-        glm::mat4 modelMatrix = glm::mat4(1.f);
-        glm::mat4 viewMatrix = glm::mat4(1.f);
-        glm::mat4 projectionMatrix = glm::mat4(1.f);
-
-        // Move the camera to give perspective
-        viewMatrix = translate(viewMatrix, glm::vec3(0.f, -0.5f, -3.f));
-
-        // Set up the projection matrix and the distance planes of our camera's viewing frustum
-        projectionMatrix = glm::perspective(
-            glm::radians(40.f),
-            static_cast<float>(WINDOW_WIDTH / WINDOW_HEIGHT),
-            0.1f,
-            100.f
-        );
-
-        // Rotate the model
-        modelMatrix = rotate(modelMatrix, pyramidRotation, glm::vec3(0.f, 1.f, 0.f));
-
-        const GLint modelMatLocation = glGetUniformLocation(shaderProgram.m_ID, "modelMatrix");
-        glUniformMatrix4fv(modelMatLocation, 1, GL_FALSE, value_ptr(modelMatrix));
-
-        const GLint viewMatLocation = glGetUniformLocation(shaderProgram.m_ID, "viewMatrix");
-        glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, value_ptr(viewMatrix));
-
-        const GLint projectionMatLocation = glGetUniformLocation(shaderProgram.m_ID, "projectionMatrix");
-        glUniformMatrix4fv(projectionMatLocation, 1, GL_FALSE, value_ptr(projectionMatrix));
+        camera.SendMatrixToShader(shaderProgram, "camMatrix");
 
         // To use our texture, we need to bind it!
         glBindTexture(GL_TEXTURE_2D, brickTexture.m_ID);
