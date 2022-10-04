@@ -27,6 +27,8 @@ private:
 	float m_normalSpeed;
 	float m_sensitivity;
 
+	bool m_firstClick;
+
 	glm::vec3 m_position;
 	glm::vec3 m_orientation;
 	glm::vec3 m_upDirection;
