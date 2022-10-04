@@ -13,17 +13,20 @@
 
 int main()
 {
-    // Vertices for our triangle, ranging from -1 to 1
-    const GLfloat vertices[] =
+    // Vertex data for the quad
+    // XYZ go from -1 to 1
+    // RGB is from  0 to 1
+    // UV  is from  0 to n where n defines how much the texture will repeat
+    constexpr GLfloat vertices[] =
     {
-    	// X |   Y  |  Z   |  Red  |  Green  |  Blue
-        -0.5f, -0.5f, 0.0f,   1.0f,   0.0f,     0.0f,   // Lower Left Corner
-        -0.5f,  0.5f, 0.0f,   0.0f,   1.0f,     0.0f,   // Lower Right Corner
-         0.5f,  0.5f, 0.0f,   0.0f,   0.0f,     1.0f,   // Upper Corner
-         0.5f, -0.5f, 0.0f,   1.0f,   1.0f,     1.0f,   // Inner Left
+    	// X |   Y  |  Z   |  Red  |  Green  |  Blue  |   U   |   V
+        -0.5f, -0.5f, 0.0f,   1.0f,   0.0f,     0.0f,   0.0f,    0.0f,  // Lower Left Corner
+        -0.5f,  0.5f, 0.0f,   0.0f,   1.0f,     0.0f,   0.0f,    1.0f,  // Lower Right Corner
+         0.5f,  0.5f, 0.0f,   0.0f,   0.0f,     1.0f,   1.0f,    1.0f,  // Upper Corner
+         0.5f, -0.5f, 0.0f,   1.0f,   1.0f,     1.0f,   1.0f,    0.0f   // Inner Left
     };
 
-    GLuint indices[] =
+    constexpr GLuint indices[] =
     {
         0, 2, 1,
         0, 3, 2
@@ -76,7 +79,7 @@ int main()
         0,
         3,
         GL_FLOAT,
-        6 * sizeof(float),
+        8 * sizeof(float),
         nullptr
     );
 
@@ -86,8 +89,18 @@ int main()
         1,
         3,
         GL_FLOAT,
-        6 * sizeof(float),
+        8 * sizeof(float),
         (void*)(3 * sizeof(float))
+    );
+
+    // Attributes for the UV data per vertex
+    vao1.LinkAttrib(
+        vbo1,
+        2,
+        2,
+        GL_FLOAT,
+        8 * sizeof(float),
+        (void*)(6 * sizeof(float))
     );
 
     vao1.Unbind();
@@ -95,6 +108,60 @@ int main()
     ebo1.Unbind();
 
     const GLint scaleUniformID = glGetUniformLocation(shaderProgram.m_ID, "scale");
+
+    // Tell stb to flip the image because OpenGL loads from bottom left
+    stbi_set_flip_vertically_on_load(true);
+
+    // Set up drawing our texture. We need floats to store the width, height and amount of colour channels in the image
+    int width, height, numColourChannels;
+    unsigned char* imagePixels = stbi_load(
+        "Red_Panda.png", 
+        &width, 
+        &height, 
+        &numColourChannels, 
+        0
+    );
+
+    // In order to use the texture, we need to create the reference and generate the GL Object
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+
+    // After, we need to activate the texture and bind it so that OpenGL can draw it
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Now we've bound the texture, we need to change the image filtering mode
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Then we can set up the repeating mode for the texture
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // Finally, we generate the image to be displayed on screen
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA,          // If the image is JPG use GL_RGB
+        width,
+        height,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        imagePixels
+    );
+
+    // And then we'll generate the mipmaps for that image
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(imagePixels);
+
+	// Unbind the texture
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    const GLuint tex0UniformID = glGetUniformLocation(shaderProgram.m_ID, "tex0");
+    shaderProgram.Activate();
+    glUniform1i(tex0UniformID, 0);
 
     while(!glfwWindowShouldClose(mainWindow))
     {
@@ -105,11 +172,15 @@ int main()
         // Use the shader program
         shaderProgram.Activate();
 
-        glUniform1f(scaleUniformID, 0.5f);
+        glUniform1f(scaleUniformID, 0.1f);
+
+        // To use our texture, we need to bind it!
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
 
         vao1.Bind();
 
-        // Draw the triangle
+        // Draw the quad with the texture
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // Swap the buffers to display the triangle on screen
@@ -121,6 +192,7 @@ int main()
     vao1.Delete();
     vbo1.Delete();
     ebo1.Delete();
+    glDeleteTextures(1, &textureID);
     shaderProgram.Delete();
 
     // Delete and stop GLFW when the program finishes

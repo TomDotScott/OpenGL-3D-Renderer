@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{ce94a554-03c2-4ac4-a450-3461f4ad81aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{5c9c6bc1-2374-41d6-aaba-4f2e8453b1ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OpenGL_Renderer.cpp">
@@ -61,5 +64,10 @@
     <ClInclude Include="OpenGLObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Red_Panda.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

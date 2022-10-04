@@ -2,8 +2,11 @@
 
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aColour;
+layout(location = 2) in vec2 aTexCoord;
 
 out vec3 colour;
+
+out vec2 texCoord;
 
 uniform float scale;
 
@@ -17,4 +20,6 @@ void main()
     );
 
     colour = aColour;
+
+    texCoord = aTexCoord;
 }
