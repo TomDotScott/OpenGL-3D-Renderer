@@ -18,12 +18,13 @@ int main()
 
     const GLfloat vertices[] =
     {
-        -0.5f       , -0.5f * rootThreeOverThree      , 0.f, // Lower Left Corner
-         0.5f       , -0.5f * rootThreeOverThree      , 0.f, // Lower Right Corner
-         0.0f       ,  0.5f * rootThreeOverThree * 2.f, 0.f, // Upper Corner
-        -0.5f / 2.f ,  0.5f * rootThreeOverThree / 2.f, 0.f, // Inner Left
-         0.5f / 2.f ,  0.5f * rootThreeOverThree / 2.f, 0.f, // Inner Right
-         0.0f       , -0.5f * rootThreeOverThree      , 0.f, // Inner Down
+    	// X        |                 Y               |  Z   |  Red  |  Green  |  Blue
+        -0.5f       , -0.5f * rootThreeOverThree      , 0.f,    0.8f,   0.2f,     0.02f,   // Lower Left Corner
+         0.5f       , -0.5f * rootThreeOverThree      , 0.f,    0.8f,   0.2f,     0.02f,   // Lower Right Corner
+         0.0f       ,  0.5f * rootThreeOverThree * 2.f, 0.f,    1.0f,   0.6f,     0.32f,   // Upper Corner
+        -0.5f / 2.f ,  0.5f * rootThreeOverThree / 2.f, 0.f,    0.9f,   0.45f,    0.07f,   // Inner Left
+         0.5f / 2.f ,  0.5f * rootThreeOverThree / 2.f, 0.f,    0.9f,   0.45f,    0.07f,   // Inner Right
+         0.0f       , -0.5f * rootThreeOverThree      , 0.f,    0.8f,   0.2f,     0.02f    // Inner Down
     };
 
     GLuint indices[] =
@@ -74,7 +75,26 @@ int main()
     VertexBufferObject vbo1(vertices, sizeof(vertices));
     ElementBufferObject ebo1(indices, sizeof(indices));
 
-    vao1.LinkVertexBufferObject(vbo1, 0);
+    // Attributes for the vertex data
+    vao1.LinkAttrib(
+        vbo1, 
+        0,
+        3,
+        GL_FLOAT,
+        6 * sizeof(float),
+        nullptr
+    );
+
+    // Attributes for the colour data per vertex
+    vao1.LinkAttrib(
+        vbo1,
+        1,
+        3,
+        GL_FLOAT,
+        6 * sizeof(float),
+        (void*)(3 * sizeof(float))
+    );
+
     vao1.Unbind();
     vbo1.Unbind();
     ebo1.Unbind();

@@ -7,7 +7,7 @@ struct VertexArrayObject : OpenGLObject
 {
 	VertexArrayObject();
 
-	void LinkVertexBufferObject(const VertexBufferObject& VBO, GLuint layout);
+	void LinkAttrib(const VertexBufferObject& VBO, GLuint layout, GLint numComponents, GLenum type, GLsizeiptr stride, const void* offset);
 
 	void Bind() const override;
 	void Unbind() const override;
