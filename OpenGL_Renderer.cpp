@@ -1,6 +1,8 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "ElementBufferObject.h"
 #include "Shader.h"
@@ -122,6 +124,31 @@ int main()
 
         // Use the shader program
         shaderProgram.Activate();
+
+        glm::mat4 modelMatrix = glm::mat4(1.f);
+        glm::mat4 viewMatrix = glm::mat4(1.f);
+        glm::mat4 projectionMatrix = glm::mat4(1.f);
+
+        // Move the camera to give perspective
+        viewMatrix = translate(viewMatrix, glm::vec3(0.f, -0.5f, -3.f));
+
+        // Set up the projection matrix and the distance planes of our camera's viewing frustum
+        projectionMatrix = glm::perspective(
+            glm::radians(40.f),
+            static_cast<float>(WINDOW_WIDTH / WINDOW_HEIGHT),
+            0.1f,
+            100.f
+        );
+
+        const GLint modelMatLocation = glGetUniformLocation(shaderProgram.m_ID, "modelMatrix");
+        glUniformMatrix4fv(modelMatLocation, 1, GL_FALSE, value_ptr(modelMatrix));
+
+        const GLint viewMatLocation = glGetUniformLocation(shaderProgram.m_ID, "viewMatrix");
+        glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, value_ptr(viewMatrix));
+
+
+        const GLint projectionMatLocation = glGetUniformLocation(shaderProgram.m_ID, "projectionMatrix");
+        glUniformMatrix4fv(projectionMatLocation, 1, GL_FALSE, value_ptr(projectionMatrix));
 
         // To use our texture, we need to bind it!
         glBindTexture(GL_TEXTURE_2D, redPanda.m_ID);
