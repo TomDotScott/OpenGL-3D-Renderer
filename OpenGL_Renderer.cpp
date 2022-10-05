@@ -191,10 +191,10 @@ int main()
 	glUniform4f(glGetUniformLocation(shaderProgram.m_ID, "lightColour"), lightColour.x, lightColour.y, lightColour.z, lightColour.w);
 	glUniform3f(glGetUniformLocation(shaderProgram.m_ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
-	Texture rock("Rock.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
+	Texture rock("Assets\\Rock.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
 	rock.SendToShader(shaderProgram, "albedo", 0);
 
-	Texture rockSpec("Rock_Specular.png", GL_TEXTURE_2D, 1, GL_R, GL_UNSIGNED_BYTE);
+	Texture rockSpec("Assets\\Rock_Specular.png", GL_TEXTURE_2D, 1, GL_R, GL_UNSIGNED_BYTE);
 	rockSpec.SendToShader(shaderProgram, "specularMap", 1);
 
 	const GLuint tex0UniformID = glGetUniformLocation(shaderProgram.m_ID, "tex0");
