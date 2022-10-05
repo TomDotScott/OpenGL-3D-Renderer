@@ -9,7 +9,8 @@ in vec2 texCoord;
 in vec3 Normal;
 in vec3 curPos;
 
-uniform sampler2D tex0;
+uniform sampler2D albedo;
+uniform sampler2D specularMap;
 
 // For Flat Shading
 uniform vec4 lightColour;
@@ -34,10 +35,10 @@ void main()
     vec3 viewDirection = normalize(camPos - curPos);
     vec3 reflectionDirection = reflect(-lightDirection, normal);
 
-    float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.f), 8);
+    float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.f), 8 * 10);
 
     float specular = specularLight * specAmount;
 
 
-    FragColor = texture(tex0, texCoord) * lightColour * (diffuse + ambient + specular);
+    FragColor = texture(albedo, texCoord) * lightColour * (diffuse + ambient + specular) + texture(specularMap, texCoord).r * specular;
 }

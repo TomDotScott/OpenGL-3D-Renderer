@@ -4,9 +4,10 @@
 
 #include "Shader.h"
 
-Texture::Texture(const std::string& filename, const GLenum textureType, const GLenum textureSlot, const GLenum format, const GLenum pixelType) :
+Texture::Texture(const std::string& filename, const GLenum textureType, const GLuint textureSlot, const GLenum format, const GLenum pixelType) :
 	OpenGLObject(0),
-	m_type(textureType)
+	m_type(textureType),
+	m_unit(textureSlot)
 {
 	// Tell stb to flip the image because OpenGL loads from bottom left
 	stbi_set_flip_vertically_on_load(true);
@@ -26,7 +27,7 @@ Texture::Texture(const std::string& filename, const GLenum textureType, const GL
 	glGenTextures(1, &m_ID);
 
 	// After, we need to activate the texture and bind it so that OpenGL can draw it
-	glActiveTexture(textureSlot);
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
 	glBindTexture(m_type, m_ID);
 
 	// Now we've bound the texture, we need to change the image filtering mode
@@ -61,6 +62,7 @@ Texture::Texture(const std::string& filename, const GLenum textureType, const GL
 
 void Texture::Bind() const
 {
+	glActiveTexture(GL_TEXTURE0 + m_unit);
 	glBindTexture(m_type, m_ID);
 }
 
@@ -75,7 +77,7 @@ void Texture::Delete() const
 }
 
 
-void Texture::TexUniformUnit(const Shader& shader, const std::string& uniform, const GLint unit)
+void Texture::SendToShader(const Shader& shader, const std::string& uniform, const GLint unit)
 {
 	const GLint texUni = glGetUniformLocation(shader.m_ID, uniform.c_str());
 

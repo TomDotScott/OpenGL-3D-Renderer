@@ -22,37 +22,17 @@ int main()
 	// UV  is from  0 to n where n defines how much the texture will repeat
 	constexpr GLfloat vertices[] =
 	{
-		//  X  |  Y  |   Z     |    R  |   G  |   B     |    U  |  V     |   nX |   nY |  nZ
-		-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, -1.0f, 0.0f,
-		-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 5.0f,      0.0f, -1.0f, 0.0f,
-		 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 5.0f,      0.0f, -1.0f, 0.0f,
-		 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, -1.0f, 0.0f,
-
-		-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,     -0.8f, 0.5f,  0.0f,
-		-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,     -0.8f, 0.5f,  0.0f,
-		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,     -0.8f, 0.5f,  0.0f,
-
-		-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f, -0.8f,
-		 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.0f, 0.5f, -0.8f,
-		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f, -0.8f,
-
-		 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.8f, 0.5f,  0.0f,
-		 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.8f, 0.5f,  0.0f,
-		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.8f, 0.5f,  0.0f,
-
-		 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f,
-		-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f,
-		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f 
+		// X |  Y  |   Z  |  R  |  G  |  B  |  U  |  V  |  nX |  nY |  nZ
+		-1.0f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 1.0f, 0.0f,
+		 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 2.0f, 0.0f, 1.0f, 0.0f,
+		 1.0f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 1.0f, 0.0f
 	};
 
 	constexpr GLuint indices[] =
 	{
-		0, 1, 2, 
-		0, 2, 3, 
-		4, 6, 5, 
-		7, 9, 8, 
-		10, 12, 11, 
-		13, 15, 14
+		0, 1, 2,
+		0, 2, 3
 	};
 
 
@@ -189,7 +169,7 @@ int main()
 	lightVBO.Unbind();
 	lightEBO.Unbind();
 
-	glm::vec4 lightColour = glm::vec4(0.f, 1.f, 0.f, 1.f);
+	glm::vec4 lightColour = glm::vec4(1.f, 1.f, 1.f, 1.f);
 
 	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
 
@@ -213,9 +193,11 @@ int main()
 
 
 
+	Texture rock("Rock.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
+	rock.SendToShader(shaderProgram, "albedo", 0);
 
-	Texture brickTexture("Mario_Bricks.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	brickTexture.TexUniformUnit(shaderProgram, "tex0", 1);
+	Texture rockSpec("Rock_Specular.png", GL_TEXTURE_2D, 1, GL_R, GL_UNSIGNED_BYTE);
+	rockSpec.SendToShader(shaderProgram, "specularMap", 1);
 
 	const GLuint tex0UniformID = glGetUniformLocation(shaderProgram.m_ID, "tex0");
 	shaderProgram.Activate();
@@ -248,7 +230,8 @@ int main()
 		camera.SendMatrixToShader(shaderProgram, "camMatrix");
 
 		// To use our texture, we need to bind it!
-		brickTexture.Bind();
+		rock.Bind();
+		rockSpec.Bind();
 
 		vao1.Bind();
 
@@ -274,7 +257,8 @@ int main()
 	vao1.Delete();
 	vbo1.Delete();
 	ebo1.Delete();
-	brickTexture.Delete();
+	rock.Delete();
+	rockSpec.Delete();
 	shaderProgram.Delete();
 
 	// Delete and stop GLFW when the program finishes
