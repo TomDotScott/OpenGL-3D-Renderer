@@ -102,7 +102,7 @@ int main()
 	// 0, 0 is bottom left of the viewport
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	Shader shaderProgram("default.vert", "default.frag");
+	Shader shaderProgram("shaders\\spotlight.vert", "shaders\\spotlight.frag");
 
 	VertexArrayObject vao1;
 	vao1.Bind();
@@ -154,7 +154,7 @@ int main()
 	vbo1.Unbind();
 	ebo1.Unbind();
 
-	Shader lightShader("light.vert", "light.frag");
+	Shader lightShader("shaders\\light.vert", "shaders\\light.frag");
 
 	VertexArrayObject lightVAO;
 	lightVAO.Bind();
