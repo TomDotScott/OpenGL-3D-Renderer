@@ -16,6 +16,9 @@ uniform vec3 lightPos;
 
 void main()
 {
+    // Add some ambient lighting
+    float ambient = 0.2f;
+
     // Find the direction that light is pointing
     vec3 normal = normalize(Normal);
 
@@ -23,5 +26,5 @@ void main()
 
     float diffuse = max(dot(normal, lightDirection), 0.0f);
 
-    FragColor = texture(tex0, texCoord) * lightColour * diffuse;
+    FragColor = texture(tex0, texCoord) * lightColour * (diffuse + ambient);
 }
