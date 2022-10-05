@@ -242,6 +242,8 @@ int main()
 
 		shaderProgram.Activate();
 
+		glUniform3f(glGetUniformLocation(shaderProgram.m_ID, "camPos"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
+
 		// Send the camera data to the default shader for the pyramid verts and texture
 		camera.SendMatrixToShader(shaderProgram, "camMatrix");
 

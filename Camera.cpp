@@ -138,3 +138,8 @@ void Camera::SendMatrixToShader(const Shader& shader, const std::string& uniform
 	);
 }
 
+const glm::vec3& Camera::GetPosition() const
+{
+	return m_position;
+}
+

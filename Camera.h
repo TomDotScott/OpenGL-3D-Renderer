@@ -15,6 +15,8 @@ public:
 	void UpdateMatrix();
 	void SendMatrixToShader(const Shader& shader, const std::string& uniform) const;
 
+	const glm::vec3& GetPosition() const;
+
 private:
 	const int m_width;
 	const int m_height;

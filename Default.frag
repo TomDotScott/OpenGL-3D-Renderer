@@ -11,8 +11,12 @@ in vec3 curPos;
 
 uniform sampler2D tex0;
 
+// For Flat Shading
 uniform vec4 lightColour;
+// For Diffuse Shading
 uniform vec3 lightPos;
+// For Specular Highlighting
+uniform vec3 camPos;
 
 void main()
 {
@@ -26,5 +30,14 @@ void main()
 
     float diffuse = max(dot(normal, lightDirection), 0.0f);
 
-    FragColor = texture(tex0, texCoord) * lightColour * (diffuse + ambient);
+    float specularLight = 0.5f;
+    vec3 viewDirection = normalize(camPos - curPos);
+    vec3 reflectionDirection = reflect(-lightDirection, normal);
+
+    float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.f), 8);
+
+    float specular = specularLight * specAmount;
+
+
+    FragColor = texture(tex0, texCoord) * lightColour * (diffuse + ambient + specular);
 }
