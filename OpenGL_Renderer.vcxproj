@@ -139,8 +139,14 @@
   <ItemGroup>
     <None Include="Default.frag" />
     <None Include="default.vert" />
+    <None Include="directional_light.frag" />
+    <None Include="directional_light.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
+    <None Include="point_light.frag" />
+    <None Include="point_light.vert" />
+    <None Include="spotlight.frag" />
+    <None Include="spotlight.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />

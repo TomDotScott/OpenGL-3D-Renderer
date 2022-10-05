@@ -10,35 +10,11 @@ in vec3 Normal;
 in vec3 curPos;
 
 uniform sampler2D albedo;
-uniform sampler2D specularMap;
 
 // For Flat Shading
 uniform vec4 lightColour;
-// For Diffuse Shading
-uniform vec3 lightPos;
-// For Specular Highlighting
-uniform vec3 camPos;
 
 void main()
 {
-    // Add some ambient lighting
-    float ambient = 0.2f;
-
-    // Find the direction that light is pointing
-    vec3 normal = normalize(Normal);
-
-    vec3 lightDirection = normalize(lightPos - curPos);
-
-    float diffuse = max(dot(normal, lightDirection), 0.0f);
-
-    float specularLight = 0.5f;
-    vec3 viewDirection = normalize(camPos - curPos);
-    vec3 reflectionDirection = reflect(-lightDirection, normal);
-
-    float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.f), 8 * 10);
-
-    float specular = specularLight * specAmount;
-
-
-    FragColor = texture(albedo, texCoord) * lightColour * (diffuse + ambient + specular) + texture(specularMap, texCoord).r * specular;
+    FragColor = texture(albedo, texCoord) * lightColour;
 }
