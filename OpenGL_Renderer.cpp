@@ -214,6 +214,13 @@ int main()
 
 	while (!glfwWindowShouldClose(mainWindow))
 	{
+		if (glfwGetKey(mainWindow, GLFW_KEY_ESCAPE))
+		{
+			// Escape was pressed, kill the game
+			glfwSetWindowShouldClose(mainWindow, GLFW_TRUE);
+		}
+
+
 		// Clear the screen before the render
 		glClearColor(0.004f, 0.196f, 0.125f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
