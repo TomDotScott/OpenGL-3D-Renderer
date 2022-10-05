@@ -22,22 +22,37 @@ int main()
 	// UV  is from  0 to n where n defines how much the texture will repeat
 	constexpr GLfloat vertices[] =
 	{
-		// X |   Y  |   Z   |  Red  |  Green  |  Blue  |  U   |    V
-		-0.5f,  0.0f,  0.5f,   0.8f,   0.72f,    0.44f,  0.0f,    0.0f,
-		-0.5f,  0.0f, -0.5f,   0.8f,   0.72f,    0.44f,  5.0f,    0.0f,
-		 0.5f,  0.0f, -0.5f,   0.8f,   0.73f,    0.44f,  0.0f,    0.0f,
-		 0.5f,  0.0f,  0.5f,   0.8f,   0.72f,    0.44f,  5.0f,    0.0f,
-		 0.0f,  0.8f,  0.0f,   0.9f,   0.86f,    0.76f,  2.5f,    5.0f
+		//  X  |  Y  |   Z     |    R  |   G  |   B     |    U  |  V     |   nX |   nY |  nZ
+		-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, -1.0f, 0.0f,
+		-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 5.0f,      0.0f, -1.0f, 0.0f,
+		 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 5.0f,      0.0f, -1.0f, 0.0f,
+		 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, -1.0f, 0.0f,
+
+		-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,     -0.8f, 0.5f,  0.0f,
+		-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,     -0.8f, 0.5f,  0.0f,
+		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,     -0.8f, 0.5f,  0.0f,
+
+		-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f, -0.8f,
+		 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.0f, 0.5f, -0.8f,
+		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f, -0.8f,
+
+		 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	 0.0f, 0.0f,      0.8f, 0.5f,  0.0f,
+		 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.8f, 0.5f,  0.0f,
+		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.8f, 0.5f,  0.0f,
+
+		 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	 5.0f, 0.0f,      0.0f, 0.5f,  0.8f,
+		-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f, 	 0.0f, 0.0f,      0.0f, 0.5f,  0.8f,
+		 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	 2.5f, 5.0f,      0.0f, 0.5f,  0.8f 
 	};
 
 	constexpr GLuint indices[] =
 	{
-		0, 2, 1,
-		0, 2, 3,
-		0, 1, 4,
-		1, 2, 4,
-		2, 3, 4,
-		3, 0, 4
+		0, 1, 2, 
+		0, 2, 3, 
+		4, 6, 5, 
+		7, 9, 8, 
+		10, 12, 11, 
+		13, 15, 14
 	};
 
 
@@ -121,7 +136,7 @@ int main()
 		0,
 		3,
 		GL_FLOAT,
-		8 * sizeof(float),
+		11 * sizeof(float),
 		nullptr
 	);
 
@@ -131,7 +146,7 @@ int main()
 		1,
 		3,
 		GL_FLOAT,
-		8 * sizeof(float),
+		11 * sizeof(float),
 		(void*)(3 * sizeof(float))
 	);
 
@@ -141,8 +156,18 @@ int main()
 		2,
 		2,
 		GL_FLOAT,
-		8 * sizeof(float),
+		11 * sizeof(float),
 		(void*)(6 * sizeof(float))
+	);
+
+	// Attributes for the normal data per vertex
+	vao1.LinkAttrib(
+		vbo1,
+		3,
+		3,
+		GL_FLOAT,
+		11 * sizeof(float),
+		(void*)(8 * sizeof(float))
 	);
 
 	vao1.Unbind();
@@ -182,8 +207,9 @@ int main()
 
 
 	shaderProgram.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.m_ID, "model"), 1, GL_FALSE, value_ptr(pyramidModelMat));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.m_ID, "modelMatrix"), 1, GL_FALSE, value_ptr(pyramidModelMat));
 	glUniform4f(glGetUniformLocation(shaderProgram.m_ID, "lightColour"), lightColour.x, lightColour.y, lightColour.z, lightColour.w);
+	glUniform3f(glGetUniformLocation(shaderProgram.m_ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 
 
