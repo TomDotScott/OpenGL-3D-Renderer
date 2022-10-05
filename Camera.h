@@ -12,6 +12,7 @@ public:
 
 	void HandleInput(GLFWwindow* window);
 
+	void UpdateMatrix();
 	void SendMatrixToShader(const Shader& shader, const std::string& uniform) const;
 
 private:
@@ -29,7 +30,9 @@ private:
 
 	bool m_firstClick;
 
+	glm::mat4 m_matrix;
 	glm::vec3 m_position;
 	glm::vec3 m_orientation;
 	glm::vec3 m_upDirection;
+
 };

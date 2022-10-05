@@ -142,6 +142,7 @@ int main()
 
         camera.HandleInput(mainWindow);
 
+        camera.UpdateMatrix();
         camera.SendMatrixToShader(shaderProgram, "camMatrix");
 
         // To use our texture, we need to bind it!

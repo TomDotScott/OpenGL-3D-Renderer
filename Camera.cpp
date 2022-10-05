@@ -17,6 +17,7 @@ Camera::Camera(const int width, const int height, const glm::vec3& position) :
 	m_normalSpeed(0.01f),
 	m_sensitivity(50.f),
 	m_firstClick(false),
+	m_matrix(1.f),
 	m_position(position),
 	m_orientation(0.f, 0.f, -1.f),
 	m_upDirection(0.f, 1.f, 0.f)
@@ -71,7 +72,7 @@ void Camera::HandleInput(GLFWwindow* window)
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-		if(m_firstClick)
+		if (m_firstClick)
 		{
 			glfwSetCursorPos(window, static_cast<double>(m_width) / 2.0, static_cast<double>(m_height) / 2.0);
 
@@ -95,7 +96,7 @@ void Camera::HandleInput(GLFWwindow* window)
 		{
 			m_orientation = newOrientation;
 		}
-		
+
 		// Rotate the orientation left and right based on mouse position
 		m_orientation = rotate(m_orientation, glm::radians(-rotY), m_upDirection);
 
@@ -111,7 +112,7 @@ void Camera::HandleInput(GLFWwindow* window)
 	}
 }
 
-void Camera::SendMatrixToShader(const Shader& shader, const std::string& uniform) const
+void Camera::UpdateMatrix()
 {
 	const glm::mat4 viewMatrix = glm::lookAt(m_position, m_position + m_orientation, m_upDirection);
 
@@ -122,12 +123,18 @@ void Camera::SendMatrixToShader(const Shader& shader, const std::string& uniform
 		m_farPlane
 	);
 
+	m_matrix = projMatrix * viewMatrix;
+}
+
+void Camera::SendMatrixToShader(const Shader& shader, const std::string& uniform) const
+{
 	const char* c = uniform.c_str();
 
 	glUniformMatrix4fv(
 		glGetUniformLocation(shader.m_ID, c),
 		1,
 		GL_FALSE,
-		glm::value_ptr(projMatrix * viewMatrix)
+		value_ptr(m_matrix)
 	);
 }
+
