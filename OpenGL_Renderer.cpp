@@ -108,34 +108,18 @@ int main()
 	Shader lightShader("shaders\\light.vert", "shaders\\light.frag");
 
 	// Using the rock textures for now on the light cube...
-	Mesh lightCube(lightVertices, lightIndices, textures);
+	Mesh lightCube(lightVertices, lightIndices, textures, glm::vec3(0.5f, 0.5f, 0.5f));
 
 
 	glm::vec4 lightColour = glm::vec4(1.f, 1.f, 1.f, 1.f);
 
-	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
-
-	glm::mat4 lightModelMat = glm::mat4(1.f);
-	lightModelMat = translate(lightModelMat, lightPos);
-
-	glm::vec3 pyramidPos = glm::vec3(0.0f, 0.f, 0.0f);
-
-	glm::mat4 pyramidModelMat = glm::mat4(1.f);
-	pyramidModelMat = translate(pyramidModelMat, pyramidPos);
-
 	lightShader.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(lightShader.m_ID, "model"), 1, GL_FALSE, value_ptr(lightModelMat));
 	glUniform4f(glGetUniformLocation(lightShader.m_ID, "lightColour"), lightColour.x, lightColour.y, lightColour.z, lightColour.w);
 
 
 	shaderProgram.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.m_ID, "modelMatrix"), 1, GL_FALSE, value_ptr(pyramidModelMat));
 	glUniform4f(glGetUniformLocation(shaderProgram.m_ID, "lightColour"), lightColour.x, lightColour.y, lightColour.z, lightColour.w);
-	glUniform3f(glGetUniformLocation(shaderProgram.m_ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-
-	const GLuint tex0UniformID = glGetUniformLocation(shaderProgram.m_ID, "tex0");
-	shaderProgram.Activate();
-	glUniform1i(tex0UniformID, 0);
+	glUniform3f(glGetUniformLocation(shaderProgram.m_ID, "lightPos"), lightCube.GetPosition().x, lightCube.GetPosition().y, lightCube.GetPosition().z);
 
 	// Enable the depth buffer for proper culling
 	glEnable(GL_DEPTH_TEST);
@@ -143,7 +127,7 @@ int main()
 	Camera camera(
 		WINDOW_WIDTH,
 		WINDOW_HEIGHT,
-		{ 0.f, 0.f, 3.f }
+		{ 0.f, 1.f, 3.f }
 	);
 
 	while (!glfwWindowShouldClose(mainWindow))

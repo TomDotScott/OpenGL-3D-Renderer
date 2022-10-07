@@ -1,11 +1,16 @@
 ﻿#include "Mesh.h"
 
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.inl>
+
 #include "Vertex.h"
 
-Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices, const std::vector<Texture>& textures) :
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices, const std::vector<Texture>& textures, const glm::vec3& position) :
 	m_vertices(vertices),
 	m_indices(indices),
 	m_textures(textures),
+	m_modelMatrix(1.f),
+	m_position(position),
 	m_vao()
 {
 	m_vao.Bind();
@@ -53,9 +58,23 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indic
 		(void*)(9 * sizeof(float))
 	);
 
+	// Make sure the matrix is set up
+	SetPosition(position);
+
 	m_vao.Unbind();
 	vbo.Unbind();
 	ebo.Unbind();
+}
+
+glm::vec3 Mesh::GetPosition() const
+{
+	return m_position;
+}
+
+void Mesh::SetPosition(const glm::vec3& position)
+{
+	m_position = position;
+	m_modelMatrix = glm::translate(m_modelMatrix, m_position);
 }
 
 void Mesh::Render(const Shader& shader, const Camera& camera)
@@ -86,6 +105,9 @@ void Mesh::Render(const Shader& shader, const Camera& camera)
 		m_textures[i].SendToShader(shader, uniform, i);
 		m_textures[i].Bind();
 	}
+
+	// Send the mesh position
+	glUniformMatrix4fv(glGetUniformLocation(shader.m_ID, "modelMatrix"), 1, GL_FALSE, value_ptr(m_modelMatrix));
 
 	// Send the camera position
 	glUniform3f(glGetUniformLocation(shader.m_ID, "camPos"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
