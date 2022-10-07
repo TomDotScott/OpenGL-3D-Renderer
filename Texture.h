@@ -5,9 +5,16 @@
 
 struct Shader;
 
+enum class eTextureType
+{
+	e_diffuse,
+	e_specular
+};
+
+
 struct Texture : OpenGLObject
 {
-	Texture(const std::string& filename, GLenum textureType, GLuint textureSlot, GLenum format, GLenum pixelType);
+	Texture(const std::string& filename, eTextureType textureType, GLuint textureSlot, GLenum format, GLenum pixelType);
 
 	void Bind() const override;
 	void Unbind() const override;
@@ -15,7 +22,9 @@ struct Texture : OpenGLObject
 
 	void SendToShader(const Shader& shader, const std::string& uniform, GLint unit);
 
+	eTextureType GetType() const;
+
 private:
-	GLenum m_type;
 	GLuint m_unit;
+	eTextureType m_type;
 };

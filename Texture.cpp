@@ -4,10 +4,10 @@
 
 #include "Shader.h"
 
-Texture::Texture(const std::string& filename, const GLenum textureType, const GLuint textureSlot, const GLenum format, const GLenum pixelType) :
+Texture::Texture(const std::string& filename, const eTextureType textureType, const GLuint textureSlot, const GLenum format, const GLenum pixelType) :
 	OpenGLObject(0),
-	m_type(textureType),
-	m_unit(textureSlot)
+	m_unit(textureSlot),
+	m_type(textureType)
 {
 	// Tell stb to flip the image because OpenGL loads from bottom left
 	stbi_set_flip_vertically_on_load(true);
@@ -28,19 +28,19 @@ Texture::Texture(const std::string& filename, const GLenum textureType, const GL
 
 	// After, we need to activate the texture and bind it so that OpenGL can draw it
 	glActiveTexture(GL_TEXTURE0 + textureSlot);
-	glBindTexture(m_type, m_ID);
+	glBindTexture(GL_TEXTURE_2D, m_ID);
 
 	// Now we've bound the texture, we need to change the image filtering mode
-	glTexParameteri(m_type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(m_type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// Then we can set up the repeating mode for the texture
-	glTexParameteri(m_type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(m_type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	// Finally, we generate the image to be displayed on screen
 	glTexImage2D(
-		m_type,
+		GL_TEXTURE_2D,
 		0,
 		GL_RGBA,
 		width,
@@ -52,7 +52,7 @@ Texture::Texture(const std::string& filename, const GLenum textureType, const GL
 	);
 
 	// And then we'll generate the mipmaps for that image
-	glGenerateMipmap(m_type);
+	glGenerateMipmap(GL_TEXTURE_2D);
 
 	stbi_image_free(imagePixels);
 
@@ -63,12 +63,12 @@ Texture::Texture(const std::string& filename, const GLenum textureType, const GL
 void Texture::Bind() const
 {
 	glActiveTexture(GL_TEXTURE0 + m_unit);
-	glBindTexture(m_type, m_ID);
+	glBindTexture(GL_TEXTURE_2D, m_ID);
 }
 
 void Texture::Unbind() const
 {
-	glBindTexture(m_type, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture::Delete() const
@@ -84,6 +84,11 @@ void Texture::SendToShader(const Shader& shader, const std::string& uniform, con
 	shader.Activate();
 
 	glUniform1i(texUni, unit);
+}
+
+eTextureType Texture::GetType() const
+{
+	return m_type;
 }
 
 

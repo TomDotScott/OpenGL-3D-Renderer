@@ -9,8 +9,8 @@ in vec2 texCoord;
 in vec3 Normal;
 in vec3 curPos;
 
-uniform sampler2D albedo;
-uniform sampler2D specularMap;
+uniform sampler2D diffuse0;
+uniform sampler2D specular0;
 
 uniform vec4 lightColour;
 uniform vec3 lightPos;
@@ -51,5 +51,5 @@ void main()
 
     float intensity = CalculateLightIntensity();
 
-    FragColor = texture(albedo, texCoord) * lightColour * (diffuse + ambient + specular * intensity) + texture(specularMap, texCoord).r * specular * intensity;
+    FragColor = texture(diffuse0, texCoord) * lightColour * (diffuse + ambient + specular * intensity) + texture(specular0, texCoord).r * specular * intensity;
 }

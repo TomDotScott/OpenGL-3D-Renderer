@@ -4,12 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "ElementBufferObject.h"
-#include "Shader.h"
-#include "Texture.h"
-#include "VertexArrayObject.h"
-#include "VertexBufferObject.h"
-#include "Camera.h"
+#include "Mesh.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -20,16 +15,15 @@ int main()
 	// XYZ go from -1 to 1
 	// RGB is from  0 to 1
 	// UV  is from  0 to n where n defines how much the texture will repeat
-	constexpr GLfloat vertices[] =
+	const std::vector<Vertex> vertices =
 	{
-		// X |  Y  |   Z  |  R  |  G  |  B  |  U  |  V  |  nX |  nY |  nZ
-		-1.0f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-		-1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 1.0f, 0.0f,
-		 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 2.0f, 0.0f, 1.0f, 0.0f,
-		 1.0f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 1.0f, 0.0f
+		Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+		Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
+		Vertex{glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
+		Vertex{glm::vec3(1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
 	};
 
-	constexpr GLuint indices[] =
+	const std::vector<GLuint> indices =
 	{
 		0, 1, 2,
 		0, 2, 3
@@ -40,20 +34,19 @@ int main()
 	// XYZ go from -1 to 1
 	// RGB is from  0 to 1
 	// UV  is from  0 to n where n defines how much the texture will repeat
-	constexpr GLfloat lightVertices[] =
+	const std::vector<Vertex> lightVertices =
 	{
-		// X |   Y  |   Z 
-		-0.1f, -0.1f,  0.1f,
-		-0.1f, -0.1f, -0.1f,
-		 0.1f, -0.1f, -0.1f,
-		 0.1f, -0.1f,  0.1f,
-		-0.1f,  0.1f,  0.1f,
-		-0.1f,  0.1f, -0.1f,
-		 0.1f,  0.1f, -0.1f,
-		 0.1f,  0.1f,  0.1f
+		Vertex{glm::vec3(-0.1f, -0.1f,  0.1f)},
+		Vertex{glm::vec3(-0.1f, -0.1f, -0.1f)},
+		Vertex{glm::vec3(0.1f, -0.1f, -0.1f)},
+		Vertex{glm::vec3(0.1f, -0.1f,  0.1f)},
+		Vertex{glm::vec3(-0.1f,  0.1f,  0.1f)},
+		Vertex{glm::vec3(-0.1f,  0.1f, -0.1f)},
+		Vertex{glm::vec3(0.1f,  0.1f, -0.1f)},
+		Vertex{glm::vec3(0.1f,  0.1f,  0.1f)}
 	};
 
-	constexpr GLuint lightIndices[] =
+	const std::vector<GLuint> lightIndices =
 	{
 		0, 1, 2,
 		0, 2, 3,
@@ -102,72 +95,21 @@ int main()
 	// 0, 0 is bottom left of the viewport
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	Shader shaderProgram("shaders\\spotlight.vert", "shaders\\spotlight.frag");
+	Shader shaderProgram("shaders\\point_light.vert", "shaders\\point_light.frag");
 
-	VertexArrayObject vao1;
-	vao1.Bind();
+	std::vector<Texture> textures
+	{
+		Texture("assets\\Rock.png", eTextureType::e_diffuse, 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("assets\\Rock_Specular.png", eTextureType::e_specular, 1, GL_RED, GL_UNSIGNED_BYTE)
+	};
 
-	VertexBufferObject vbo1(vertices, sizeof(vertices));
-	ElementBufferObject ebo1(indices, sizeof(indices));
-
-	// Attributes for the vertex data
-	vao1.LinkAttrib(
-		vbo1,
-		0,
-		3,
-		GL_FLOAT,
-		11 * sizeof(float),
-		nullptr
-	);
-
-	// Attributes for the colour data per vertex
-	vao1.LinkAttrib(
-		vbo1,
-		1,
-		3,
-		GL_FLOAT,
-		11 * sizeof(float),
-		(void*)(3 * sizeof(float))
-	);
-
-	// Attributes for the UV data per vertex
-	vao1.LinkAttrib(
-		vbo1,
-		2,
-		2,
-		GL_FLOAT,
-		11 * sizeof(float),
-		(void*)(6 * sizeof(float))
-	);
-
-	// Attributes for the normal data per vertex
-	vao1.LinkAttrib(
-		vbo1,
-		3,
-		3,
-		GL_FLOAT,
-		11 * sizeof(float),
-		(void*)(8 * sizeof(float))
-	);
-
-	vao1.Unbind();
-	vbo1.Unbind();
-	ebo1.Unbind();
+	Mesh plane(vertices, indices, textures);
 
 	Shader lightShader("shaders\\light.vert", "shaders\\light.frag");
 
-	VertexArrayObject lightVAO;
-	lightVAO.Bind();
+	// Using the rock textures for now on the light cube...
+	Mesh lightCube(lightVertices, lightIndices, textures);
 
-	VertexBufferObject lightVBO{ lightVertices, sizeof(lightVertices) };
-
-	ElementBufferObject lightEBO{ lightIndices, sizeof(lightVertices) };
-
-	lightVAO.LinkAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), nullptr);
-
-	lightVAO.Unbind();
-	lightVBO.Unbind();
-	lightEBO.Unbind();
 
 	glm::vec4 lightColour = glm::vec4(1.f, 1.f, 1.f, 1.f);
 
@@ -176,7 +118,7 @@ int main()
 	glm::mat4 lightModelMat = glm::mat4(1.f);
 	lightModelMat = translate(lightModelMat, lightPos);
 
-	glm::vec3 pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 pyramidPos = glm::vec3(0.0f, 0.f, 0.0f);
 
 	glm::mat4 pyramidModelMat = glm::mat4(1.f);
 	pyramidModelMat = translate(pyramidModelMat, pyramidPos);
@@ -190,12 +132,6 @@ int main()
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.m_ID, "modelMatrix"), 1, GL_FALSE, value_ptr(pyramidModelMat));
 	glUniform4f(glGetUniformLocation(shaderProgram.m_ID, "lightColour"), lightColour.x, lightColour.y, lightColour.z, lightColour.w);
 	glUniform3f(glGetUniformLocation(shaderProgram.m_ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-
-	Texture rock("Assets\\Rock.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
-	rock.SendToShader(shaderProgram, "albedo", 0);
-
-	Texture rockSpec("Assets\\Rock_Specular.png", GL_TEXTURE_2D, 1, GL_R, GL_UNSIGNED_BYTE);
-	rockSpec.SendToShader(shaderProgram, "specularMap", 1);
 
 	const GLuint tex0UniformID = glGetUniformLocation(shaderProgram.m_ID, "tex0");
 	shaderProgram.Activate();
@@ -234,24 +170,8 @@ int main()
 		// Send the camera data to the default shader for the pyramid verts and texture
 		camera.SendMatrixToShader(shaderProgram, "camMatrix");
 
-		// To use our texture, we need to bind it!
-		rock.Bind();
-		rockSpec.Bind();
-
-		vao1.Bind();
-
-		// Draw the quad with the texture
-		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
-
-		lightShader.Activate();
-
-		// Send the camera data to the lighting shader for proper lighting
-		camera.SendMatrixToShader(lightShader, "camMatrix");
-
-		// Draw the Light cube
-		lightVAO.Bind();
-		glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
-
+		plane.Render(shaderProgram, camera);
+		lightCube.Render(lightShader, camera);
 
 		// Swap the buffers to display the triangle on screen
 		glfwSwapBuffers(mainWindow);
@@ -259,12 +179,9 @@ int main()
 		glfwPollEvents();
 	}
 
-	vao1.Delete();
-	vbo1.Delete();
-	ebo1.Delete();
-	rock.Delete();
-	rockSpec.Delete();
+
 	shaderProgram.Delete();
+	lightShader.Delete();
 
 	// Delete and stop GLFW when the program finishes
 	glfwDestroyWindow(mainWindow);

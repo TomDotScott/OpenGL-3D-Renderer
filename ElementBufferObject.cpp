@@ -1,11 +1,11 @@
 ﻿#include "ElementBufferObject.h"
 
-ElementBufferObject::ElementBufferObject(const GLuint* indices, const GLsizeiptr size) :
+ElementBufferObject::ElementBufferObject(std::vector<GLuint>& indices) :
 	OpenGLObject(0)
 {
 	glGenBuffers(1, &m_ID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 }
 
 void ElementBufferObject::Bind() const

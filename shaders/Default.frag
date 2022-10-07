@@ -9,12 +9,12 @@ in vec2 texCoord;
 in vec3 Normal;
 in vec3 curPos;
 
-uniform sampler2D albedo;
+uniform sampler2D albedo0;
 
 // For Flat Shading
 uniform vec4 lightColour;
 
 void main()
 {
-    FragColor = texture(albedo, texCoord) * lightColour;
+    FragColor = texture(albedo0, texCoord) * lightColour;
 }

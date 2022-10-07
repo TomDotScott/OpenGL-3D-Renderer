@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ElementBufferObject.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="OpenGL_Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb.cpp" />
@@ -137,23 +138,13 @@
     <ClCompile Include="VertexBufferObject.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Default.frag" />
-    <None Include="default.vert" />
-    <None Include="directional_light.frag" />
-    <None Include="directional_light.vert" />
-    <None Include="light.frag" />
-    <None Include="light.vert" />
-    <None Include="point_light.frag" />
-    <None Include="point_light.vert" />
-    <None Include="spotlight.frag" />
-    <None Include="spotlight.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ElementBufferObject.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="OpenGLObject.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexArrayObject.h" />
     <ClInclude Include="VertexBufferObject.h" />
   </ItemGroup>
@@ -162,6 +153,18 @@
     <Image Include="Red_Panda.png" />
     <Image Include="Rock.png" />
     <Image Include="Rock_Specular.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\Default.frag" />
+    <None Include="shaders\default.vert" />
+    <None Include="shaders\directional_light.frag" />
+    <None Include="shaders\directional_light.vert" />
+    <None Include="shaders\light.frag" />
+    <None Include="shaders\light.vert" />
+    <None Include="shaders\point_light.frag" />
+    <None Include="shaders\point_light.vert" />
+    <None Include="shaders\spotlight.frag" />
+    <None Include="shaders\spotlight.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
