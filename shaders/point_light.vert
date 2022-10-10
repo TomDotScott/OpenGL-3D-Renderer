@@ -16,15 +16,22 @@ out vec3 curPos;
 
 uniform mat4 camMatrix;
 uniform mat4 modelMatrix;
+uniform mat4 translation;
+uniform mat4 rotation;
+uniform mat4 scale;
 
 void main()
 {
-    curPos = vec3(modelMatrix * vec4(aPos, 1));
+    // Use the new translation uniforms
+    // curPos = vec3(modelMatrix * translation * rotation * scale * vec4(aPos, 1));
+    curPos = vec3(modelMatrix * translation * rotation * vec4(aPos, 1));
 
     gl_Position = camMatrix * vec4(curPos, 1.0);
 
     colour = aColour;
 
-    texCoord = aTexCoord;
+    // Rotate the UVs by 90 degrees 
+    texCoord = mat2(0.0, -1.0, 1.0, 0.0) * aTexCoord;
+
     Normal = aNormal;
 }

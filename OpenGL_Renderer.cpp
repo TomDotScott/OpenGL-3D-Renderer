@@ -4,65 +4,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Mesh.h"
+#include "Model.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
 int main()
 {
-	// Vertex data for the pyramid
-	// XYZ go from -1 to 1
-	// RGB is from  0 to 1
-	// UV  is from  0 to n where n defines how much the texture will repeat
-	const std::vector<Vertex> vertices =
-	{
-		Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
-		Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
-		Vertex{glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
-		Vertex{glm::vec3(1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
-	};
-
-	const std::vector<GLuint> indices =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
-
-
-	// Vertex data for the Light cube
-	// XYZ go from -1 to 1
-	// RGB is from  0 to 1
-	// UV  is from  0 to n where n defines how much the texture will repeat
-	const std::vector<Vertex> lightVertices =
-	{
-		Vertex{glm::vec3(-0.1f, -0.1f,  0.1f)},
-		Vertex{glm::vec3(-0.1f, -0.1f, -0.1f)},
-		Vertex{glm::vec3(0.1f, -0.1f, -0.1f)},
-		Vertex{glm::vec3(0.1f, -0.1f,  0.1f)},
-		Vertex{glm::vec3(-0.1f,  0.1f,  0.1f)},
-		Vertex{glm::vec3(-0.1f,  0.1f, -0.1f)},
-		Vertex{glm::vec3(0.1f,  0.1f, -0.1f)},
-		Vertex{glm::vec3(0.1f,  0.1f,  0.1f)}
-	};
-
-	const std::vector<GLuint> lightIndices =
-	{
-		0, 1, 2,
-		0, 2, 3,
-		0, 4, 7,
-		0, 7, 3,
-		3, 7, 6,
-		3, 6, 2,
-		2, 6, 5,
-		2, 5, 1,
-		1, 5, 4,
-		1, 4, 0,
-		4, 5, 6,
-		4, 6, 7
-	};
-
-
 	glfwInit();
 
 	// Tell glfw the version of OpenGL we're using
@@ -97,29 +45,8 @@ int main()
 
 	Shader shaderProgram("shaders\\point_light.vert", "shaders\\point_light.frag");
 
-	std::vector<Texture> textures
-	{
-		Texture("assets\\Rock.png", eTextureType::e_diffuse, 0, GL_RGBA, GL_UNSIGNED_BYTE),
-		Texture("assets\\Rock_Specular.png", eTextureType::e_specular, 1, GL_RED, GL_UNSIGNED_BYTE)
-	};
-
-	Mesh plane(vertices, indices, textures);
 
 	Shader lightShader("shaders\\light.vert", "shaders\\light.frag");
-
-	// Using the rock textures for now on the light cube...
-	Mesh lightCube(lightVertices, lightIndices, textures, glm::vec3(0.5f, 0.5f, 0.5f));
-
-
-	glm::vec4 lightColour = glm::vec4(1.f, 1.f, 1.f, 1.f);
-
-	lightShader.Activate();
-	glUniform4f(glGetUniformLocation(lightShader.m_ID, "lightColour"), lightColour.x, lightColour.y, lightColour.z, lightColour.w);
-
-
-	shaderProgram.Activate();
-	glUniform4f(glGetUniformLocation(shaderProgram.m_ID, "lightColour"), lightColour.x, lightColour.y, lightColour.z, lightColour.w);
-	glUniform3f(glGetUniformLocation(shaderProgram.m_ID, "lightPos"), lightCube.GetPosition().x, lightCube.GetPosition().y, lightCube.GetPosition().z);
 
 	// Enable the depth buffer for proper culling
 	glEnable(GL_DEPTH_TEST);
@@ -129,6 +56,8 @@ int main()
 		WINDOW_HEIGHT,
 		{ 0.f, 1.f, 3.f }
 	);
+
+	Model sword("assets\\models\\sword\\scene.gltf");
 
 	while (!glfwWindowShouldClose(mainWindow))
 	{
@@ -154,8 +83,7 @@ int main()
 		// Send the camera data to the default shader for the pyramid verts and texture
 		camera.SendMatrixToShader(shaderProgram, "camMatrix");
 
-		plane.Render(shaderProgram, camera);
-		lightCube.Render(lightShader, camera);
+		sword.Render(shaderProgram, camera);
 
 		// Swap the buffers to display the triangle on screen
 		glfwSwapBuffers(mainWindow);

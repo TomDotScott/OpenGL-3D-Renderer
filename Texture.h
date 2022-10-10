@@ -14,7 +14,7 @@ enum class eTextureType
 
 struct Texture : OpenGLObject
 {
-	Texture(const std::string& filename, eTextureType textureType, GLuint textureSlot, GLenum format, GLenum pixelType);
+	Texture(const std::string& filename, eTextureType textureType, GLuint textureSlot);
 
 	void Bind() const override;
 	void Unbind() const override;

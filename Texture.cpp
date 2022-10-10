@@ -1,10 +1,11 @@
 ﻿#include "Texture.h"
 
+#include <cassert>
 #include <stb_image.h>
 
 #include "Shader.h"
 
-Texture::Texture(const std::string& filename, const eTextureType textureType, const GLuint textureSlot, const GLenum format, const GLenum pixelType) :
+Texture::Texture(const std::string& filename, const eTextureType textureType, const GLuint textureSlot) :
 	OpenGLObject(0),
 	m_unit(textureSlot),
 	m_type(textureType)
@@ -39,17 +40,67 @@ Texture::Texture(const std::string& filename, const eTextureType textureType, co
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	// Finally, we generate the image to be displayed on screen
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		GL_RGBA,
-		width,
-		height,
-		0,
-		static_cast<GLint>(format),
-		static_cast<GLint>(pixelType),
-		imagePixels
-	);
+	if (numColourChannels == 4)
+	{
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			width,
+			height,
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			imagePixels
+		);
+	}
+	else if (numColourChannels == 3)
+	{
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			width,
+			height,
+			0,
+			GL_RGB,
+			GL_UNSIGNED_BYTE,
+			imagePixels
+		);
+	}
+	else if (numColourChannels == 2)
+	{
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			width,
+			height,
+			0,
+			GL_RG,
+			GL_UNSIGNED_BYTE,
+			imagePixels
+		);
+	}
+	else if (numColourChannels == 1)
+	{
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			width,
+			height,
+			0,
+			GL_R,
+			GL_UNSIGNED_BYTE,
+			imagePixels
+		);
+	}
+	else
+	{
+		std::cout << "Automatic texture type recognition failed\n";
+		assert(false);
+	}
 
 	// And then we'll generate the mipmaps for that image
 	glGenerateMipmap(GL_TEXTURE_2D);
