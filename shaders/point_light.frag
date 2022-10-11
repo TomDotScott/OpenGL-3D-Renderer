@@ -51,5 +51,6 @@ void main()
 
     float intensity = CalculateLightIntensity();
 
+    //FragColor = texture(diffuse0, texCoord) * lightColour * (diffuse + ambient + specular * intensity) + texture(specular0, texCoord).r * specular * intensity;
     FragColor = texture(diffuse0, texCoord) * lightColour * (diffuse + ambient + specular * intensity) + texture(specular0, texCoord).r * specular * intensity;
 }

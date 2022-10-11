@@ -48,6 +48,12 @@ int main()
 
 	Shader lightShader("shaders\\light.vert", "shaders\\light.frag");
 
+	const glm::vec4 lightColour = glm::vec4(1.f);
+
+	shaderProgram.Activate();
+
+	glUniform4f(glGetUniformLocation(shaderProgram.m_ID, "lightColour"), lightColour.x, lightColour.y, lightColour.z, lightColour.w);
+
 	// Enable the depth buffer for proper culling
 	glEnable(GL_DEPTH_TEST);
 
@@ -57,7 +63,7 @@ int main()
 		{ 0.f, 1.f, 3.f }
 	);
 
-	Model sword("assets\\models\\sword\\scene.gltf");
+	Model sword("assets\\models\\scroll\\scene.gltf");
 
 	while (!glfwWindowShouldClose(mainWindow))
 	{
