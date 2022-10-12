@@ -6,7 +6,7 @@
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtc/type_ptr.inl>
 
-Camera::Camera(const int width, const int height, const glm::vec3& position) :
+Camera::Camera(const int width, const int height, const glm::vec3& position, const glm::vec3& orientation, bool isControllable) :
 	m_width(width),
 	m_height(height),
 	m_fov(40.f),
@@ -17,9 +17,10 @@ Camera::Camera(const int width, const int height, const glm::vec3& position) :
 	m_normalSpeed(0.01f),
 	m_sensitivity(50.f),
 	m_firstClick(false),
+	m_isControllable(isControllable),
 	m_matrix(1.f),
 	m_position(position),
-	m_orientation(0.f, 0.f, -1.f),
+	m_orientation(orientation),
 	m_upDirection(0.f, 1.f, 0.f)
 {
 	m_currentSpeed = m_normalSpeed;
@@ -141,5 +142,10 @@ void Camera::SendMatrixToShader(const Shader& shader, const std::string& uniform
 const glm::vec3& Camera::GetPosition() const
 {
 	return m_position;
+}
+
+bool Camera::IsControllable() const
+{
+	return m_isControllable;
 }
 

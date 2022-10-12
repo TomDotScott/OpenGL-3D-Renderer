@@ -8,7 +8,7 @@
 class Camera
 {
 public:
-	Camera(int width, int height, const glm::vec3& position);
+	Camera(int width, int height, const glm::vec3& position, const glm::vec3& orientation, bool isControllable);
 
 	void HandleInput(GLFWwindow* window);
 
@@ -16,6 +16,7 @@ public:
 	void SendMatrixToShader(const Shader& shader, const std::string& uniform) const;
 
 	const glm::vec3& GetPosition() const;
+	bool IsControllable() const;
 
 private:
 	const int m_width;
@@ -31,6 +32,8 @@ private:
 	float m_sensitivity;
 
 	bool m_firstClick;
+
+	bool m_isControllable;
 
 	glm::mat4 m_matrix;
 	glm::vec3 m_position;
