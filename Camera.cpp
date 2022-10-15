@@ -13,7 +13,7 @@ Camera::Camera(const int width, const int height, const glm::vec3& position, con
 	m_nearPlane(0.1f),
 	m_farPlane(1000.f),
 	m_currentSpeed(0.f),
-	m_fastSpeed(0.1f),
+	m_fastSpeed(0.5f),
 	m_normalSpeed(0.01f),
 	m_sensitivity(50.f),
 	m_firstClick(false),
@@ -147,5 +147,11 @@ const glm::vec3& Camera::GetPosition() const
 bool Camera::IsControllable() const
 {
 	return m_isControllable;
+}
+
+void Camera::OutputPositionOrientation() const
+{
+	printf("POSITION: (x:%f, y:%f, z:%f)\n", m_position.x, m_position.y, m_position.z);
+	printf("ORIENTATION: (x:%f, y:%f, z:%f)\n", m_orientation.x, m_orientation.y, m_orientation.z);
 }
 

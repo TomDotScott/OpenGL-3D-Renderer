@@ -128,7 +128,7 @@ void Texture::Delete() const
 }
 
 
-void Texture::SendToShader(const Shader& shader, const std::string& uniform, const GLint unit)
+void Texture::SendToShader(const Shader& shader, const std::string& uniform, const GLint unit) const
 {
 	const GLint texUni = glGetUniformLocation(shader.m_ID, uniform.c_str());
 

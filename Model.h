@@ -12,7 +12,7 @@ class Model
 public:
 	Model(const std::string& filename);
 
-	void Render(const Shader& shader, const Camera& camera);
+	void Render(const Camera& camera, const Shader& shader, const glm::vec3& translation = glm::vec3(0.f), const glm::quat& rotation = glm::quat(1.f, 0.f, 0.f, 0.f), const glm::vec3& scale = glm::vec3(1.f)) const;
 
 private:
 	std::string m_filename;

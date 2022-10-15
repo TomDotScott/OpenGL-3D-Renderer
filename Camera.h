@@ -18,6 +18,8 @@ public:
 	const glm::vec3& GetPosition() const;
 	bool IsControllable() const;
 
+	void OutputPositionOrientation() const;
+
 private:
 	const int m_width;
 	const int m_height;

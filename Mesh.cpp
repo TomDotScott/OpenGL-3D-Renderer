@@ -61,7 +61,7 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indic
 	ebo.Unbind();
 }
 
-void Mesh::Render(const Camera& camera, const Shader& shader, const glm::mat4& modelMatrix, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
+void Mesh::Render(const Camera& camera, const Shader& shader, const glm::mat4& modelMatrix, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale) const
 {
 	shader.Activate();
 	m_vao.Bind();

@@ -20,7 +20,7 @@ struct Texture : OpenGLObject
 	void Unbind() const override;
 	void Delete() const override;
 
-	void SendToShader(const Shader& shader, const std::string& uniform, GLint unit);
+	void SendToShader(const Shader& shader, const std::string& uniform, GLint unit) const;
 
 	eTextureType GetType() const;
 

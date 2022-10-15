@@ -19,11 +19,11 @@ Model::Model(const std::string& filename) :
 	TraverseNode(0);
 }
 
-void Model::Render(const Shader& shader, const Camera& camera)
+void Model::Render(const Camera& camera, const Shader& shader, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale) const
 {
 	for (int i = 0; i < m_meshes.size(); ++i)
 	{
-		m_meshes[i].Render(shader, camera, m_transformationMatrices[i]);
+		m_meshes[i].Render(camera, shader, m_transformationMatrices[i], translation, rotation, scale);
 	}
 }
 
@@ -289,13 +289,13 @@ std::vector<Texture> Model::GetTextures()
 
 		if (!skip) {
 			// If we find the texture, create it with the correct tags 
-			if (texturePath.find("baseColor") != std::string::npos)
+			if (texturePath.find("baseColor") != std::string::npos || texturePath.find("diffuse") != std::string::npos)
 			{
 				const Texture diffuse(fileDirectory + texturePath, eTextureType::e_diffuse, m_loadedTextures.size());
 				textures.emplace_back(diffuse);
 				m_loadedTextures.emplace_back(diffuse);
 			}
-			else if (texturePath.find("metallicRoughness") != std::string::npos)
+			else if (texturePath.find("metallicRoughness") != std::string::npos || texturePath.find("specular") != std::string::npos)
 			{
 				// Because most GLTF models will be PBR, I'm using roughness for specular for now...
 				Texture specular(fileDirectory + texturePath, eTextureType::e_specular, m_loadedTextures.size());
