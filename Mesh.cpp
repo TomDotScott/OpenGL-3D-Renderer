@@ -61,7 +61,7 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indic
 	ebo.Unbind();
 }
 
-void Mesh::Render(const Shader& shader, const Camera& camera, const glm::mat4& modelMatrix, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
+void Mesh::Render(const Camera& camera, const Shader& shader, const glm::mat4& modelMatrix, const glm::vec3& translation, const glm::quat& rotation, const glm::vec3& scale)
 {
 	shader.Activate();
 	m_vao.Bind();
@@ -105,7 +105,7 @@ void Mesh::Render(const Shader& shader, const Camera& camera, const glm::mat4& m
 
 	glUniformMatrix4fv(glGetUniformLocation(shader.m_ID, "translation"), 1, GL_FALSE, glm::value_ptr(trans));
 	glUniformMatrix4fv(glGetUniformLocation(shader.m_ID, "rotation"), 1, GL_FALSE, glm::value_ptr(rot));
-	glUniformMatrix4fv(glGetUniformLocation(shader.m_ID, "scale"), 1, GL_FALSE, glm::value_ptr(scale));
+	glUniformMatrix4fv(glGetUniformLocation(shader.m_ID, "scale"), 1, GL_FALSE, glm::value_ptr(sca));
 	glUniformMatrix4fv(glGetUniformLocation(shader.m_ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 
