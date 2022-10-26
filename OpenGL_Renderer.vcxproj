@@ -133,8 +133,10 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="OpenGL_Renderer.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexArrayObject.cpp" />
@@ -146,8 +148,10 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OpenGLObject.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexArrayObject.h" />
