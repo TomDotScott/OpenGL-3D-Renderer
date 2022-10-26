@@ -1,20 +1,14 @@
 ﻿#include "GameObject.h"
 
-GameObject::GameObject(const std::string& modelFilename, const Shader& shader, const glm::vec3& position, const glm::vec3& velocity) :
+GameObject::GameObject(const std::string& modelFilename, const Shader& shader, const float scale, const glm::vec3& position) :
 	m_position(position),
-	m_velocity(velocity),
+	// TODO: Make this a parameter, for now it's just the default rotation quaternion
+	m_rotation(1.f, 0.f, 0.f, 0.f),
+	m_scale(scale),
 	m_model(modelFilename),
 	m_shader(shader)
 {
 
-}
-
-void GameObject::Update(const float dt)
-{
-	m_position += m_velocity * dt;
-
-	
-	printf("GAME_OBJECT_POSITION: (x:%f, y:%f, z:%f)\n", m_position.x, m_position.y, m_position.z);
 }
 
 void GameObject::Render(const Camera& camera) const
@@ -29,7 +23,7 @@ void GameObject::Render(const Camera& camera) const
 	glUniform3f(glGetUniformLocation(m_shader.m_ID, "camPos"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
 
 	camera.SendMatrixToShader(m_shader, "camMatrix");
-	m_model.Render(camera, m_shader, m_position);
+	m_model.Render(camera, m_shader, m_position, m_rotation, glm::vec3(m_scale));
 }
 
 void GameObject::CleanUp() const

@@ -6,6 +6,7 @@
 
 #include "Model.h"
 #include "GameObject.h"
+#include "Sphere.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
@@ -67,16 +68,23 @@ int main()
 		WINDOW_HEIGHT,
 		{ 291.79f, 10.53f, -0.23f },
 		{ -1.f, 0.f, 0.f },
-		false
+		true
 	);
 
 	// Model sword("assets\\models\\sword\\scene.gltf");
 	Shader defaultShader("shaders\\directional_light.vert", "shaders\\directional_light.frag");
 
-	GameObject poolBall("assets\\models\\pool_ball\\scene.gltf", defaultShader, glm::vec3(200.f, 10.f, 0.f), glm::vec3(0.f, 10.f, 10.f));
-	GameObject poolTable("assets\\models\\pool_table\\scene.gltf", defaultShader);
+	Sphere sphere1(1.f, glm::vec3(200.f, 10.f, 0.f), glm::vec3(0.f, 10.f, 10.f));
+	Sphere sphere2(1.f, glm::vec3(200.f, 10.f, 0.f), glm::vec3(0.f, -10.f, 10.f));
 
-	std::vector<GameObject> gameObjects = { poolBall, poolTable };
+	// GameObject poolBall("assets\\models\\pool_ball\\scene.gltf", defaultShader, glm::vec3(200.f, 10.f, 0.f), glm::vec3(0.f, 10.f, 10.f));
+	// GameObject poolTable("assets\\models\\pool_table\\scene.gltf", defaultShader);
+
+	const std::vector<GameObject*> gameObjects = {
+		/*poolBall, poolTable*/
+		&sphere1,
+		&sphere2
+	};
 	
 	std::chrono::high_resolution_clock::time_point timeAtBeginning = std::chrono::high_resolution_clock::now();
 
@@ -100,7 +108,7 @@ int main()
 		{
 			camera.HandleInput(mainWindow);
 
-			camera.OutputPositionOrientation();
+			// camera.OutputPositionOrientation();
 		}
 
 		camera.UpdateMatrix();
@@ -115,17 +123,29 @@ int main()
 		// sword.Render(shaderProgram, camera);
 
 		// Update all the GOs
-		for (GameObject& gameObject : gameObjects)
+		for (GameObject* gameObject : gameObjects)
 		{
-			gameObject.Update(deltaTime);
+			gameObject->Update(deltaTime);
 		}
 
 		// After everything has moved, handle collisions
+		// TODO: Come up with a more efficient way of checking collisions than checking everything against everything else...
+		for(GameObject* gameObject : gameObjects)
+		{
+			for (GameObject* otherGameObject : gameObjects)
+			{
+				// TODO: Use some sort of GUID system to check for whether two objects are the same
+				if (gameObject != otherGameObject)
+				{
+					gameObject->CheckCollision(otherGameObject);
+				}
+			}
+		}
 
 		// Finally draw the result to the screen, after resolving collisions
-		for(const auto& gameObject : gameObjects)
+		for(const auto* gameObject : gameObjects)
 		{
-			gameObject.Render(camera);
+			gameObject->Render(camera);
 		}
 
 		// Swap the buffers to display the triangle on screen
@@ -140,9 +160,9 @@ int main()
 
 	// shaderProgram.Delete();
 
-	for(const auto& gameObject : gameObjects)
+	for(const auto* gameObject : gameObjects)
 	{
-		gameObject.CleanUp();
+		gameObject->CleanUp();
 	}
 
 	lightShader.Delete();
