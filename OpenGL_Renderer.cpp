@@ -6,6 +6,7 @@
 
 #include "Model.h"
 #include "GameObject.h"
+#include "Physics.h"
 #include "Sphere.h"
 
 #define WINDOW_WIDTH 800
@@ -52,16 +53,8 @@ int main()
 
 	const glm::vec4 lightColour = glm::vec4(1.f);
 
-	/*shaderProgram.Activate();
-
-	glUniform4f(glGetUniformLocation(shaderProgram.m_ID, "lightColour"), lightColour.x, lightColour.y, lightColour.z, lightColour.w);*/
-
 	// Enable the depth buffer for proper culling
 	glEnable(GL_DEPTH_TEST);
-
-
-	//POSITION: (x:291.799133, y : 10.534409, z : 5.547813)
-	//ORIENTATION : (x : -1.019559, y : -0.007838, z : -0.020023)
 
 	Camera camera(
 		WINDOW_WIDTH,
@@ -74,18 +67,15 @@ int main()
 	// Model sword("assets\\models\\sword\\scene.gltf");
 	Shader defaultShader("shaders\\directional_light.vert", "shaders\\directional_light.frag");
 
-	Sphere sphere1(1.f, glm::vec3(200.f, 10.f, 0.f), glm::vec3(0.f, 10.f, 10.f));
-	Sphere sphere2(1.f, glm::vec3(200.f, 10.f, 0.f), glm::vec3(0.f, -10.f, 10.f));
+	Sphere movingSphere(1, glm::vec3(200.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
 
-	// GameObject poolBall("assets\\models\\pool_ball\\scene.gltf", defaultShader, glm::vec3(200.f, 10.f, 0.f), glm::vec3(0.f, 10.f, 10.f));
-	// GameObject poolTable("assets\\models\\pool_table\\scene.gltf", defaultShader);
+	Sphere stationarySphere(1, glm::vec3(200.f, 10.f, 0.f), glm::vec3(0.f));
 
 	const std::vector<GameObject*> gameObjects = {
-		/*poolBall, poolTable*/
-		&sphere1,
-		&sphere2
+		&movingSphere,
+		&stationarySphere
 	};
-	
+
 	std::chrono::high_resolution_clock::time_point timeAtBeginning = std::chrono::high_resolution_clock::now();
 
 	while (!glfwWindowShouldClose(mainWindow))
@@ -113,14 +103,6 @@ int main()
 
 		camera.UpdateMatrix();
 
-		//shaderProgram.Activate();
-
-		//glUniform3f(glGetUniformLocation(shaderProgram.m_ID, "camPos"), camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
-
-		// Send the camera data to the default shader for the pyramid verts and texture
-		//camera.SendMatrixToShader(shaderProgram, "camMatrix");
-
-		// sword.Render(shaderProgram, camera);
 
 		// Update all the GOs
 		for (GameObject* gameObject : gameObjects)
@@ -128,22 +110,11 @@ int main()
 			gameObject->Update(deltaTime);
 		}
 
-		// After everything has moved, handle collisions
 		// TODO: Come up with a more efficient way of checking collisions than checking everything against everything else...
-		for(GameObject* gameObject : gameObjects)
-		{
-			for (GameObject* otherGameObject : gameObjects)
-			{
-				// TODO: Use some sort of GUID system to check for whether two objects are the same
-				if (gameObject != otherGameObject)
-				{
-					gameObject->CheckCollision(otherGameObject);
-				}
-			}
-		}
+		Physics::SphereToStationarySphereCCD(stationarySphere, movingSphere, deltaTime);
 
 		// Finally draw the result to the screen, after resolving collisions
-		for(const auto* gameObject : gameObjects)
+		for (const auto* gameObject : gameObjects)
 		{
 			gameObject->Render(camera);
 		}
@@ -160,7 +131,7 @@ int main()
 
 	// shaderProgram.Delete();
 
-	for(const auto* gameObject : gameObjects)
+	for (const auto* gameObject : gameObjects)
 	{
 		gameObject->CleanUp();
 	}
