@@ -12,6 +12,17 @@
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 600
 
+int random(const int min, const int max)
+{
+	static bool first = true;
+	if (first)
+	{
+		srand(time(nullptr));
+		first = false;
+	}
+	return min + rand() % ((max + 1) - min);
+}
+
 int main()
 {
 	glfwInit();
@@ -70,6 +81,9 @@ int main()
 	Sphere movingSphere(1, glm::vec3(200.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
 
 	Sphere stationarySphere(1, glm::vec3(200.f, 10.f, 0.f), glm::vec3(0.f));
+
+	movingSphere.SetPosition(glm::vec3(random(0, 100), random(0, 100), random(0, 100)));
+	movingSphere.SetVelocity(glm::normalize(stationarySphere.GetPosition() - movingSphere.GetPosition()) * 3.f);
 
 	const std::vector<GameObject*> gameObjects = {
 		&movingSphere,
